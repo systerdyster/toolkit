@@ -1,4 +1,4 @@
-import logService, { ILogService } from "./log.service"; 
+import logService, { ILogService } from "./log.service";
 
 export interface ICacheStore {
     $get<T>(cacheKey: string): Promise<T>;
@@ -15,56 +15,48 @@ class CacheStore implements ICacheStore {
     constructor() {
         this.$log = logService;
         this.cache = {};
-        this.useLocalStorage = (typeof(Storage) !== "undefined");
+        this.useLocalStorage = (typeof (Storage) !== "undefined");
 
-        if(this.useLocalStorage) {
+        if (this.useLocalStorage) {
             this.localStorage = window.localStorage;
         }
     }
 
-    $get = async <T>(cacheKey: string) : Promise<T> => {
-        try {
-            let valueJson;
+    $get = async <T>(cacheKey: string): Promise<T> => {
 
-            if(this.useLocalStorage) {
-                valueJson = await this.localStorage.getItem(cacheKey);
-            } else {
-                valueJson = await this.cache[cacheKey];
-            }
+        let valueJson;
 
-            if(typeof(valueJson) != "undefined") {
-                return JSON.parse(valueJson) as T;
-            }
-            return null;
-        } catch(e) {
-            this.$log.error("cache.store => ", e);
+        if (this.useLocalStorage) {
+            valueJson = await this.localStorage.getItem(cacheKey);
+        } else {
+            valueJson = await this.cache[cacheKey];
+        }
+
+        if (typeof (valueJson) != "undefined") {
+            return JSON.parse(valueJson) as T;
+        }
+        return null;
+
+    }
+
+    $set = (cacheKey: string, value: any): void => {
+        let valueJson = JSON.stringify(value);
+
+        if (this.useLocalStorage) {
+            this.localStorage.setItem(cacheKey, valueJson);
+        } else {
+            this.cache[cacheKey] = valueJson;
         }
     }
 
-    $set = (cacheKey: string, value: any) : void => {
-        try {
-            let valueJson = JSON.stringify(value);
+    $remove = (cacheKey): void => {
 
-            if(this.useLocalStorage) {
-                this.localStorage.setItem(cacheKey, valueJson);
-            } else {
-                this.cache[cacheKey] = valueJson;
-            }
-        } catch(e) {
-            this.$log.error("cache.store => ", e);
+        if (this.useLocalStorage) {
+            this.localStorage.removeItem(cacheKey);
+        } else {
+            this.cache[cacheKey] = undefined;
         }
-    } 
-    
-    $remove = (cacheKey) : void => {
-        try {
-            if(this.useLocalStorage) {
-                this.localStorage.removeItem(cacheKey);
-            } else {
-                this.cache[cacheKey] = undefined;
-            }
-        } catch(e) {
-            this.$log.error("cache.store => ", e);
-        }
+
     }
 }
 

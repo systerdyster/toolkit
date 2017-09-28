@@ -1,11 +1,11 @@
-﻿import axios, { AxiosInstance, AxiosResponse } from "axios";
+﻿import axios, { AxiosInstance } from "axios";
 import logService, { ILogService } from "./log.service";
 import cacheStore, { ICacheStore } from './cache.store';
 
 export interface IHttpService {
-    $get<T>(location: string, para?: any, noCache?: boolean) : Promise<T>;
-    $post<T>(location: string, para?: any) : Promise<T>;
-    $delete<T>(location: string, para?: any) : Promise<T>;
+    $get<T>(location: string, para?: any, noCache?: boolean): Promise<T>;
+    $post<T>(location: string, para?: any): Promise<T>;
+    $delete<T>(location: string, para?: any): Promise<T>;
 
     createCacheKey(location: string, para?: any): string;
 };
@@ -24,50 +24,38 @@ class HttpService implements IHttpService {
         this.$cache = cacheStore;
     }
 
-     $get = async <T>(location: string, para?: any, noCache?: boolean) : Promise<T> => {
-        try {
-            let cacheKey = this.createCacheKey(location, para);
+    $get = async <T>(location: string, para?: any, noCache?: boolean): Promise<T> => {
+        let cacheKey = this.createCacheKey(location, para);
 
-            if(!noCache) {
-                let value = await this.$cache.$get<T>(cacheKey);
-                if(value != null) {
-                    this.$log.info("[Cached]", value);
-                    return value;
-                }
+        if (!noCache) {
+            let value = await this.$cache.$get<T>(cacheKey);
+            if (value != null) {
+                this.$log.info("[Cached]", value);
+                return value;
             }
-
-            let response = await this.$http.get(this.basepath + location, { params: para });
-            if(response.status == 200 && !noCache) {
-                this.$cache.$set(cacheKey, response.data);
-            }
-
-            return response.data; 
-        } catch (e) {
-            this.$log.error("http.service => ", e);
         }
+
+        let response = await this.$http.get(this.basepath + location, { params: para });
+        if (response.status == 200 && !noCache) {
+            this.$cache.$set(cacheKey, response.data);
+        }
+
+        return response.data;
     }
 
-     $post = async <T>(location: string, para?: any) : Promise<T> => {
-        try {
-            let response = await this.$http.post(this.basepath + location, { params: para });
-            return response.data;
-        } catch (e) {
-            this.$log.error("http.service => ", e);
-        }
+    $post = async <T>(location: string, para?: any): Promise<T> => {
+        let response = await this.$http.post(this.basepath + location, { params: para });
+        return response.data;
     }
 
-     $delete = async <T>(location: string, para?: any) : Promise<T> => {
-        try {
-            let response = await this.$http.delete(this.basepath + location, { params: para });
-            return response.data;
-        } catch (e) {
-            this.$log.error("http.service => ", e);
-        }
+    $delete = async <T>(location: string, para?: any): Promise<T> => {
+        let response = await this.$http.delete(this.basepath + location, { params: para });
+        return response.data;
     }
 
-    createCacheKey = (location: string, para?: any) : string => {
+    createCacheKey = (location: string, para?: any): string => {
         let cacheKey = location;
-        if (typeof(para) != "undefined") {
+        if (typeof (para) != "undefined") {
             cacheKey += '?' + encodeURIComponent(JSON.stringify(para));
         }
         return cacheKey;
