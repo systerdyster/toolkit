@@ -58,7 +58,6 @@ class HttpService implements IHttpService {
         if (typeof (para) != "undefined") {
             for (var property in para) {
                 if (para.hasOwnProperty(property)) {
-                    console.log(property);
                     cacheKey += `/${property}=${para[property]}`;
                 }
             }
