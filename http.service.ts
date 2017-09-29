@@ -56,7 +56,12 @@ class HttpService implements IHttpService {
     createCacheKey = (location: string, para?: any): string => {
         let cacheKey = location;
         if (typeof (para) != "undefined") {
-            cacheKey += '?' + encodeURIComponent(JSON.stringify(para));
+            for (var property in para) {
+                if (para.hasOwnProperty(property)) {
+                    console.log(property);
+                    cacheKey += `/${property}=${para[property]}`;
+                }
+            }
         }
         return cacheKey;
     }
