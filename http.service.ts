@@ -37,7 +37,7 @@ class HttpService implements IHttpService {
 
         let response = await this.$http.get(this.basepath + location, { params: para });
         if (response.status == 200 && !noCache) {
-            this.$cache.$set(cacheKey, response.data);
+            this.$cache.$set(cacheKey, response.data, 10);
         }
 
         return response.data;
