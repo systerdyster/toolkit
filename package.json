@@ -1,0 +1,22 @@
+{
+  "name": "toolkit",
+  "version": "1.0.0",
+  "description": "common tools",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/systerdyster/toolkit.git"
+  },
+  "author": "Fredrik Gärdin",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/systerdyster/toolkit/issues"
+  },
+  "homepage": "https://github.com/systerdyster/toolkit#readme",
+  "devDependencies": {
+    "tslint": "^5.20.0"
+  }
+}
