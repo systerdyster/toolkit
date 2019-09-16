@@ -1,4 +1,4 @@
-import { ILogHelper } from 'Loghelper/ILogHelper';
+import { ILogHelper } from '../LogHelper';
 import { IIndexDbHelper } from './IIndexDbHelper';
 
 export class IndexDbHelper implements IIndexDbHelper {
